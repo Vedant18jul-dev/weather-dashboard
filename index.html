@@ -94,7 +94,7 @@
   </div>
 
   <script>
-    const API_KEY = "YOUR_API_KEY"; // openweathermap.org se free key lo
+    // openweathermap.org se free key lo
     const out = document.getElementById("out");
     const input = document.getElementById("city");
 
@@ -105,7 +105,7 @@
       out.textContent = "Loading...";
       try {
         const res = await fetch(
-          `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`
+          `https://empty-recipe-2973.manjukhare17sep.workers.dev/?city=${encodeURIComponent(city)}`
         );
         const d = await res.json();
         if (!res.ok) throw new Error(d.message || "Something went wrong");
