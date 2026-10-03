@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WeatherNow</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      font-family: system-ui, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background: linear-gradient(160deg, #0f2027, #2c5364);
+      color: #fff;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+    }
+
+    .search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    input {
+      flex: 1;
+      padding: 12px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+
+    button {
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #ffb703;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, .12);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    .temp {
+      font-size: 3.5rem;
+      font-weight: 700;
+    }
+
+    .desc {
+      text-transform: capitalize;
+      opacity: .85;
+      margin-bottom: 14px;
+    }
+
+    .error {
+      color: #ffb4a8;
+    }
+
+    img {
+      width: 90px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <h1>WeatherNow</h1>
+    <div class="search">
+      <input id="city" placeholder="Search city..." value="Noida">
+      <button id="btn">Search</button>
+    </div>
+    <div class="card" id="out">Search a city to see the weather.</div>
+  </div>
+
+  <script>
+    const API_KEY = "YOUR_API_KEY"; // openweathermap.org se free key lo
+    const out = document.getElementById("out");
+    const input = document.getElementById("city");
+
+    async function getWeather() {
+      const city = input.value.trim();
+      if (!city) return (out.innerHTML = '<p class="error">Please enter a city name.</p>');
+
+      out.textContent = "Loading...";
+      try {
+        const res = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&appid=${API_KEY}`
+        );
+        const d = await res.json();
+        if (!res.ok) throw new Error(d.message || "Something went wrong");
+
+        out.innerHTML = `
+        <h2>${d.name}, ${d.sys.country}</h2>
+        <img src="https://openweathermap.org/img/wn/${d.weather[0].icon}@2x.png" alt="">
+        <div class="temp">${Math.round(d.main.temp)}°C</div>
+        <p class="desc">${d.weather[0].description}</p>
+        <p>💧 Humidity: ${d.main.humidity}%</p>`;
+      } catch (e) {
+        out.innerHTML = `<p class="error">${e.message}. Check city name or API key.</p>`;
+      }
+    }
+
+    document.getElementById("btn").onclick = getWeather;
+    input.addEventListener("keydown", e => e.key === "Enter" && getWeather());
+  </script>
+</body>
+
+</html>
